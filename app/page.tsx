@@ -1,9 +1,5 @@
-export const metadata = {
-  title: 'Home',
-  description: 'This is the home page',
-};
+import styles from './page.module.css';
 
-const Home = () => {
-  return <div>Home</div>;
-};
-export default Home;
+export default function Home() {
+  return <p>test</p>;
+}
