@@ -1,31 +1,63 @@
-import axios from 'axios';
+import http from './http';
+import type { CreateNote, Note } from '../types/note';
 
-export type Note = {
-  id: string;
-  title: string;
-  content: string;
-  categoryId: string;
-  userId: string;
-  createdAt: string;
-  updatedAt: string;
-};
+interface FetchNotesParams {
+  page?: number;
+  perPage?: number;
+  search?: string;
+}
 
-export type NoteListResponse = {
-  notes: Note[];
+interface FetchNotesResponse {
+  data: Note[]; // масив нотаток
+  page: number;
+  perPage: number;
   total: number;
-};
+  totalPages: number;
+}
+interface ApiNotesResponse {
+  notes: Note[]; // <-- головне поле
+  page?: number; // може бути
+  perPage?: number; // може бути
+  total?: number; // може бути
+  totalPages: number;
+}
 
-axios.defaults.baseURL = 'https://next-v1-notes-api.goit.study';
+export async function fetchNotes(
+  params: FetchNotesParams = {}
+): Promise<FetchNotesResponse> {
+  const { page = 1, perPage = 10, search = '' } = params;
 
-// export const getNotes = async () => {
-//   const res = await axios.get<NoteListResponse>('/notes');
-//   return res.data;
-// };
+  const res = await http.get<ApiNotesResponse>('/notes', {
+    params: {
+      page,
+      perPage,
+      ...(search ? { search } : {}),
+    },
+  });
+  const body = res.data;
+  const items = body.notes ?? [];
+  const total = body.total ?? items.length;
+  const _perPage = body.perPage ?? perPage;
+  const totalPages =
+    body.totalPages ??
+    (_perPage ? Math.max(1, Math.ceil(total / _perPage)) : 1);
+  const _page = body.page ?? page;
 
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+  return {
+    data: items,
+    page: _page,
+    perPage: _perPage,
+    total,
+    totalPages,
+  };
+}
 
-export const getNotes = async () => {
-  await delay(2000);
-  const res = await axios.get<NoteListResponse>('/notes');
+export async function createNote(dto: CreateNote): Promise<Note> {
+  const res = await http.post<Note>('/notes', dto);
   return res.data;
-};
+}
+
+export async function deleteNote(id: string): Promise<Note> {
+  const res = await http.delete<Note>(`/notes/${id}`);
+  return res.data;
+}

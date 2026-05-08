@@ -1,4 +1,4 @@
-import css from '../components/Header/Header.module.css';
+import css from './Header.module.css';
 import Link from 'next/link';
 
 const Header = () => {
@@ -13,12 +13,6 @@ const Header = () => {
           </li>
           <li>
             <Link href="/notes">Notes</Link>
-          </li>
-          <li>
-            <Link href="/profile">Profile</Link>
-          </li>
-          <li>
-            <Link href="/about">About</Link>
           </li>
         </ul>
       </nav>
