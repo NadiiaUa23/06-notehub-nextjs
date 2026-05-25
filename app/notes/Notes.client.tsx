@@ -7,9 +7,7 @@ import {
   keepPreviousData,
 } from '@tanstack/react-query';
 import { useDebounce } from 'use-debounce';
-
 import css from './Notes.module.css';
-
 import SearchBox from '@/components/SearchBox/SearchBox';
 import Pagination from '@/components/Pagination/Pagination';
 import Modal from '@/components/Modal/Modal';
@@ -39,15 +37,11 @@ const NotesClient = () => {
         search: searchDebounced || undefined,
       }),
     placeholderData: keepPreviousData,
-    staleTime: 30_000,
+    staleTime: 50_000,
   });
 
   const items = notesQuery.data?.data ?? [];
   const totalPages = notesQuery.data?.totalPages ?? 1;
-
-  useEffect(() => {
-    setPage(1);
-  }, [searchDebounced]);
 
   useEffect(() => {
     if (!notesQuery.data) return;
@@ -67,10 +61,20 @@ const NotesClient = () => {
     }
   }, [page, searchDebounced, notesQuery.data, queryClient]);
 
+  if (notesQuery.isLoading || notesQuery.isFetching) {
+    return <Loader />;
+  }
+
   return (
     <div className={css.app}>
       <header className={css.toolbar}>
-        <SearchBox value={search} onChange={setSearch} />
+        <SearchBox
+          value={search}
+          onChange={value => {
+            setSearch(value);
+            setPage(1);
+          }}
+        />
 
         {totalPages > 1 && (
           <Pagination
@@ -84,8 +88,6 @@ const NotesClient = () => {
           Create note +
         </button>
       </header>
-
-      {notesQuery.isLoading && <Loader />}
 
       {notesQuery.isError && (
         <ErrorMessage

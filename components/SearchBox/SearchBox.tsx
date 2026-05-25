@@ -1,6 +1,6 @@
-import type { ChangeEvent } from "react";
-import css from "./SearchBox.module.css";
-import { useDebouncedCallback } from "use-debounce";
+import type { ChangeEvent } from 'react';
+import css from './SearchBox.module.css';
+import { useDebouncedCallback } from 'use-debounce';
 
 interface SearchBoxProps {
   value: string;
@@ -21,7 +21,7 @@ export default function SearchBox({ value, onChange }: SearchBoxProps) {
         className={css.input}
         type="text"
         placeholder="Search notes"
-        defaultValue={value} // неконтрольований інпут
+        defaultValue={value}
         onChange={handleChange}
         data-testid="searchbox"
       />
