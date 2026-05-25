@@ -17,7 +17,7 @@ const NotesPage = async () => {
       fetchNotes({
         page: 1,
         perPage: PER_PAGE,
-        search: undefined,
+        search: '',
       }),
   });
 
